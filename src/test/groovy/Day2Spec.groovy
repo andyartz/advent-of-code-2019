@@ -21,14 +21,27 @@ class Day2Spec extends Specification {
 
     void "should restore program"() {
         expect:
-        systemUnderTest.restore([0, 0, 0, 0]) == [0, 12, 2, 0]
+        systemUnderTest.restore([0, 0, 0, 0], 12, 2) == [0, 12, 2, 0]
     }
 
-    void "should solve puzzle"() {
+    void "should solve puzzle part 1"() {
         given:
         List<Integer> program = getClass().getResource('day2.txt').text.split(',')*.toInteger()
 
         expect:
-        systemUnderTest.restore(program).with { systemUnderTest.run(it) }[0] == 12490719
+        systemUnderTest.restore(program, 12, 2).with { systemUnderTest.run(it)[0] } == 12490719
+    }
+
+    void "should solve puzzle part 2"() {
+        given:
+        List<Integer> program = getClass().getResource('day2.txt').text.split(',')*.toInteger()
+        int maxIndex = program.size()-1
+
+        expect:
+        [(0..maxIndex),(0..maxIndex)].combinations().find { int noun, int verb ->
+            systemUnderTest.restore(program, noun, verb).with { systemUnderTest.run(it)[0] } == 19690720
+        }.with { combination ->
+            100 * combination[0] + combination[1]
+        } == 2003
     }
 }
