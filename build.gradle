@@ -1,0 +1,16 @@
+plugins {
+    id 'groovy'
+}
+
+group 'com.andyartz'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.5.8'
+
+    testCompile 'org.spockframework:spock-core:1.3-groovy-2.5'
+}
