@@ -11,6 +11,6 @@ repositories {
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.5.8'
-
+    compile 'math.geom2d:javaGeom:0.11.1'
     testCompile 'org.spockframework:spock-core:1.3-groovy-2.5'
 }
