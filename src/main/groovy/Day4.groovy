@@ -11,4 +11,16 @@ class Day4 {
             }
         }
     }
+
+    Integer getNumberOfPasswordsStrict(IntRange integers) {
+        integers.count {
+            [null, "$it".collect { it as Integer }, null].flatten().collate(4, 1, false).with { adjacentDigits ->
+                adjacentDigits.find {
+                    it[1] == it[2] && it[0] != it[1] && it[2] != it[3] // check inside pair first for efficiency
+                } && adjacentDigits.every {
+                    it[1] <= it[2]
+                }
+            }
+        }
+    }
 }
