@@ -2,15 +2,31 @@ import math.geom2d.Point2D
 import math.geom2d.line.Line2D
 
 class Day3 {
-    Integer getDistanceToClosestIntersection(List<String> wirePaths) {
 
+    Point2D origin = new Point2D(0,0)
+
+    Integer getDistanceToClosestIntersection(List<String> wirePaths) {
+        Set<Point2D> intersections = getWires(wirePaths).combinations().collectMany { a, b -> getIntersections(a, b) }
+        intersections.removeIf { it == new Point2D(0,0) }
+        intersections.collect { it.x().abs() + it.y().abs() }.min()
+    }
+
+    Integer getShortestPathToIntersection(List<String> wirePaths) {
+        getWires(wirePaths).with { wires ->
+            wires.collect { (0..it.size()-1) }.combinations().findResults { a, b ->
+                List<Line2D> wireA = wires[0][0..a]
+                List<Line2D> wireB = wires[1][0..b]
+
+                (getIntersections(wireA.last(), wireB.last()) - origin) ? getStepsToIntersection(wireA, wireB) : null
+            }
+        }.min()
+    }
+
+    private List<List<Line2D>> getWires(List<String> wirePaths) {
         assert wirePaths.size() == 2
 
         List<List<Line2D>> wires = wirePaths*.split(',').collect { getWireSegments(it as List) }
-
-        Set<Point2D> intersections = [wires[0], wires[1]].combinations().collectMany { a, b -> getIntersections(a, b) }
-        intersections.removeIf { it == new Point2D(0,0) }
-        intersections.collect { it.x().abs() + it.y().abs() }.min()
+        wires
     }
 
     private List<Line2D> getWireSegments(List<String> wirePathVectors) {
@@ -47,5 +63,15 @@ class Day3 {
         } else {
             (a.x1.toInteger()..a.x2.toInteger()).intersect((b.x1.toInteger()..b.x2.toInteger())).collect { new Point2D(it, a.y1) }
         }
+    }
+
+    Integer getStepsToIntersection(List<Line2D> wireA, List<Line2D> wireB) {
+        getStepsToIntersection(wireA.removeLast(), wireB.removeLast()) + ([wireA, wireB].collectMany { it*.length() }.sum() as Integer ?: 0)
+    }
+
+    Integer getStepsToIntersection(Line2D a, Line2D b) {
+        getIntersections(a, b).collect {
+            it.distance(a.firstPoint()) + it.distance(b.firstPoint())
+        }.min()
     }
 }
